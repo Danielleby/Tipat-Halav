@@ -140,27 +140,6 @@ pop_info <- pop_info %>% select(-NOx_first4weeks, -NOx_firstyear)
 ## merge files ##
 pop_info_united <- merge(x = pop_info, y = settlement, by = "PersonId", all.x = T)
 
-# create sector column #
-# exploring settlements' columns 
-settlement_table <- as.data.frame(table(pop_info_united$SettlementName))
-#haredi settlements on dataset: Elad, Bnei Brak, Beitar, Modiin Ilit, Rehasim
-
-# create the sector column
-pop_info_united$sector <- pop_info_united$pop_group
-
-#define haredi as someone who lives in main haredi settlements
-pop_info_united$sector[pop_info_united$SettlementName == "אלעד"]<- "Haredi"
-pop_info_united$sector[pop_info_united$SettlementName == "בני ברק"] <- "Haredi"
-pop_info_united$sector[pop_info_united$SettlementName == 'בית"ר עילית'] <- "Haredi"
-pop_info_united$sector[pop_info_united$SettlementName == "מודיעין עילית"] <- "Haredi"
-pop_info_united$sector[pop_info_united$SettlementName == "רכסים"] <- "Haredi"
-
-#define other Jewish as Jewish not Haredi
-pop_info_united$sector[pop_info_united$sector == "Jewish"] <- "Jewish not haredi"
-
-#sector frequencies table
-#table(pop_info_united$sector)
-
 #remove irrelevant columns and edit columns names #using dplyr
 pop_info_united <- pop_info_united %>%
   filter(child_yob > 2014) %>%
@@ -179,12 +158,10 @@ pop_info_united <- pop_info_united %>% relocate(SIE_quin, .after = SIE)
 
 ##### merge outcome file with population information file #####
 tipat_halav_df <- merge(x = outcome_df, y = pop_info_united, by = "PersonId", all = T)
-tipat_halav_df2 <- merge(x = outcome_df2, y = pop_info_united, by = "PersonId", all = T)
-
 
 ##### export file # using readr
 write_csv(tipat_halav_df, "C:/Users/danie/Desktop/thesis/data_sets/data_processed/tipat_halav_df.csv")
-write_csv(tipat_halav_df2, "C:/Users/danie/Desktop/thesis/data_sets/data_processed/tipat_halav_df2.csv")
+
 
 
 
